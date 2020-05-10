@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './user/user.module';
 
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
@@ -11,6 +12,7 @@ import jwtConfig from './config/jwt.config';
             load: [databaseConfig, jwtConfig],
             isGlobal: true,
         }),
+        UserModule,
     ],
 })
 export class AppModule {}
