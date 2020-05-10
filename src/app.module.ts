@@ -6,6 +6,7 @@ import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -33,6 +34,7 @@ import { GraphQLModule } from '@nestjs/graphql';
             autoSchemaFile: true,
         }),
         UserModule,
+        AuthModule,
     ],
 })
 export class AppModule {}
