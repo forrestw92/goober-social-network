@@ -29,6 +29,8 @@
     "@nestjs/passport": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/typeorm": "^7.0.0",
+    "@types/mongodb": "^3.5.16",
+    "@types/passport-jwt": "^3.0.3",
     "apollo-server-express": "^2.13.0",
     "bcrypt": "^4.0.1",
     "class-transformer": "^0.2.3",
