@@ -1,5 +1,5 @@
 import { Column, Entity, ObjectIdColumn, PrimaryColumn } from 'typeorm';
-
+import * as bcrypt from 'bcrypt';
 @Entity()
 export class User {
     @ObjectIdColumn()
@@ -37,4 +37,9 @@ export class User {
 
     @Column()
     updatedAt: string;
+
+    async validatePassword(password: string): Promise<boolean> {
+        const hash = await bcrypt.hash(password, this.salt);
+        return hash === this.password;
+    }
 }

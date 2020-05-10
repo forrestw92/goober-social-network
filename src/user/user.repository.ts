@@ -1,9 +1,10 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserInput } from './user.input';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
+import { UserLoginInput } from './user-login.input';
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
     async createUser(createUserInput: CreateUserInput): Promise<User> {
@@ -45,7 +46,34 @@ export class UserRepository extends Repository<User> {
         }
         return user;
     }
-    private async hashPassword(
+
+    async validatePassword(
+        userLoginInput: UserLoginInput,
+    ): Promise<User | null> {
+        const { password, email, username } = userLoginInput;
+        if (!email && !username) {
+            throw new UnauthorizedException(
+                'Please login with email or username',
+            );
+        }
+        let user: User;
+        if (email) {
+            user = await this.findOne({
+                email,
+            });
+        } else if (username) {
+            user = await this.findOne({
+                username,
+            });
+        }
+        if (user && (await user.validatePassword(password))) {
+            return user;
+        } else {
+            return null;
+        }
+    }
+
+    protected async hashPassword(
         password: string,
         salt: string,
     ): Promise<string> {
