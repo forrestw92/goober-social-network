@@ -15,6 +15,9 @@ export class UserType {
     birthDate: string;
 
     @Field()
+    isConfirmed: boolean;
+
+    @Field()
     email: string;
 
     @Field()
