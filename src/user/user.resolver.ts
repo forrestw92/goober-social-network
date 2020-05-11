@@ -4,7 +4,7 @@ import { UserType } from './user.type';
 import { CreateUserInput } from './user.input';
 import { User } from './user.entity';
 
-@Resolver('User')
+@Resolver(of => User)
 export class UserResolver {
     constructor(private readonly userService: UserService) {}
     @Mutation(type => UserType)
