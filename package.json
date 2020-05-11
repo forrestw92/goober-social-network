@@ -29,6 +29,7 @@
     "@nestjs/passport": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/typeorm": "^7.0.0",
+    "@sendgrid/mail": "^7.1.0",
     "@types/mysql": "^2.15.10",
     "@types/passport-jwt": "^3.0.3",
     "apollo-server-express": "^2.13.0",
