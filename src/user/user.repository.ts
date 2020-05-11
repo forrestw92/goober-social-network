@@ -32,6 +32,8 @@ export class UserRepository extends Repository<User> {
             firstName,
             lastName,
             birthDate,
+            salt,
+            isConfirmed: false,
             createdAt: nowISO,
             updatedAt: nowISO,
         });

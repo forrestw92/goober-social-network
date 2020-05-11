@@ -17,17 +17,21 @@ import { AuthModule } from './auth/auth.module';
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
-            useFactory: (configService: ConfigService) => ({
-                type: 'mongodb',
-                username: configService.get<string>('username'),
-                port: configService.get<number>('port'),
-                password: configService.get<string>('password'),
-                host: configService.get<string>('host'),
-                database: configService.get<string>('name'),
-                synchronize: configService.get<boolean>('synchronize'),
-                entities: [__dirname + '/**/*.entity.{js,ts}'],
-                useUnifiedTopology: true,
-            }),
+            useFactory: (configService: ConfigService) => {
+                return {
+                    type: 'mysql',
+                    username: configService.get<string>('database.username'),
+                    port: configService.get<number>('database.port'),
+                    password: configService.get<string>('database.password'),
+                    host: configService.get<string>('database.host'),
+                    database: configService.get<string>('database.database'),
+                    synchronize: configService.get<boolean>(
+                        'database.synchronize',
+                    ),
+                    entities: [__dirname + '/**/*.entity.{js,ts}'],
+                    useUnifiedTopology: true,
+                };
+            },
             inject: [ConfigService],
         }),
         GraphQLModule.forRoot({
