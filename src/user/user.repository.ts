@@ -28,7 +28,7 @@ export class UserRepository extends Repository<User> {
             id: uuid(),
             password: hashedPassword,
             username,
-            email,
+            email: email.toLowerCase(),
             firstName,
             lastName,
             birthDate,
