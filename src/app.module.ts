@@ -9,11 +9,12 @@ import { SendGridModule } from './send-grid/send-grid.module';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import mailingConfig from './config/mailing.config';
+import authConfig from './config/auth.config';
 @Module({
     imports: [
         ConfigModule.forRoot({
             envFilePath: ['.env.development', '.env.production'],
-            load: [databaseConfig, jwtConfig, mailingConfig],
+            load: [databaseConfig, jwtConfig, mailingConfig, authConfig],
             isGlobal: true,
         }),
         TypeOrmModule.forRootAsync({
