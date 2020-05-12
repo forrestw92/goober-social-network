@@ -52,22 +52,13 @@ export class UserRepository extends Repository<User> {
     async validatePassword(
         userLoginInput: UserLoginInput,
     ): Promise<User | null> {
-        const { password, email, username } = userLoginInput;
-        if (!email && !username) {
-            throw new UnauthorizedException(
-                'Please login with email or username',
-            );
+        const { password, email } = userLoginInput;
+        if (!email) {
+            throw new UnauthorizedException('Please login with email');
         }
-        let user: User;
-        if (email) {
-            user = await this.findOne({
-                email,
-            });
-        } else if (username) {
-            user = await this.findOne({
-                username,
-            });
-        }
+        let user: User = await this.findOne({
+            where: { email: email.toLowerCase() },
+        });
         if (user && (await user.validatePassword(password))) {
             return user;
         } else {
