@@ -17,6 +17,9 @@ export class User {
     @Column()
     isConfirmed: boolean;
 
+    @Column()
+    confirmKey: string;
+
     @Column({ unique: true })
     email: string;
 
@@ -38,5 +41,9 @@ export class User {
     async validatePassword(password: string): Promise<boolean> {
         const hash = await bcrypt.hash(password, this.salt);
         return hash === this.password;
+    }
+
+    async validateConfirmKey(confirmKey: string): Promise<boolean> {
+        return this.confirmKey === confirmKey;
     }
 }

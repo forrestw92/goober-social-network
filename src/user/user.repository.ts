@@ -5,6 +5,7 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { UserLoginInput } from './user-login.input';
+
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
     async createUser(createUserInput: CreateUserInput): Promise<User> {
@@ -24,7 +25,7 @@ export class UserRepository extends Repository<User> {
         const nowISO: string = new Date().toISOString();
         const hashedPassword = await this.hashPassword(password, salt);
 
-        const user: User = await this.create({
+        return this.create({
             id: uuid(),
             password: hashedPassword,
             username,
@@ -32,13 +33,12 @@ export class UserRepository extends Repository<User> {
             firstName,
             lastName,
             birthDate,
+            confirmKey: '',
             salt,
             isConfirmed: false,
             createdAt: nowISO,
             updatedAt: nowISO,
         });
-
-        return this.save(user);
     }
 
     async getUserById(userId: string): Promise<User> {
@@ -75,6 +75,16 @@ export class UserRepository extends Repository<User> {
         }
     }
 
+    async validateConfirmKey(confirmKey: string): Promise<User> {
+        const user: User = await this.findOne({
+            confirmKey,
+        });
+        if (user && (await user.validateConfirmKey(confirmKey))) {
+            return user;
+        } else {
+            return null;
+        }
+    }
     protected async hashPassword(
         password: string,
         salt: string,

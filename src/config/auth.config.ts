@@ -1,6 +1,10 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('auth', () => ({
-    shouldConfirmKeyExpire: true,
-    confirmKeyExpireTime: '1h',
+    ignoreConfirmKeyExpiration: false,
+    confirmKeyExpireTime: '5s',
+    redirectUrlOnceConfirmed:
+        process.env.NODE_ENV === 'DEVELOPMENT'
+            ? 'https://localhost:3000'
+            : 'https://google.com',
 }));
