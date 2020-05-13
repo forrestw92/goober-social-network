@@ -1,10 +1,4 @@
-import {
-    Controller,
-    Get,
-    Param,
-    Res,
-    UnauthorizedException,
-} from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { UserRepository } from '../user/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
@@ -26,18 +20,8 @@ export class AuthController {
         @Param('confirmKey') confirmKey: string,
         @Res() res: Response,
     ): Promise<void> {
-        const user = await this.userRepository.validateConfirmKey(confirmKey);
-        if (!user) {
-            throw new UnauthorizedException('Invalid Confirm key');
-        }
-        const validated = this.authService.validateEmailConfirmKey(
-            confirmKey,
-            user,
-        );
+        const validated = await this.authService.confirmAccount(confirmKey);
         if (validated) {
-            user.isConfirmed = true;
-            user.confirmKey = '';
-            await this.userRepository.save(user);
             return res.redirect(
                 this.configService.get<string>('auth.redirectUrlOnceConfirmed'),
             );

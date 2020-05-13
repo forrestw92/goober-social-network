@@ -3,22 +3,27 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/user.entity';
 import { JwtPayload } from './jwt.payload';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService,
+
+        @InjectRepository(UserRepository)
+        private readonly userRepository: UserRepository,
     ) {}
 
-    createAccessToken(user: User): { accessToken: string } {
+    public createAccessToken(user: User): { accessToken: string } {
         const { username } = user;
         const payload: JwtPayload = { username };
         const accessToken = this.jwtService.sign(payload);
         return { accessToken };
     }
 
-    createEmailConfirmKey(email: string): string {
+    public createEmailConfirmKey(email: string): string {
         const payload = { email };
         return this.jwtService.sign(payload, {
             expiresIn: this.configService.get<string>(
@@ -27,7 +32,7 @@ export class AuthService {
         });
     }
 
-    validateEmailConfirmKey(token: string, user: User): boolean {
+    public validateEmailConfirmKey(token: string, user: User): boolean {
         try {
             this.jwtService.verify(token, {
                 ignoreExpiration: this.configService.get<boolean>(
@@ -54,7 +59,22 @@ export class AuthService {
         }
     }
 
-    validateAccessToken(token: string): boolean {
+    public async confirmAccount(confirmKey: string): Promise<boolean> {
+        const user = await this.userRepository.validateConfirmKey(confirmKey);
+        if (!user) {
+            throw new UnauthorizedException('Invalid Confirm key');
+        }
+        const validated = this.validateEmailConfirmKey(confirmKey, user);
+        if (validated) {
+            user.isConfirmed = true;
+            user.confirmKey = '';
+            await this.userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    public validateAccessToken(token: string): boolean {
         try {
             this.jwtService.verify(token);
             return true;
