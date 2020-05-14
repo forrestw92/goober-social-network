@@ -5,13 +5,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
-import { CreateUserInput } from './user.input';
+import { CreateUserInput } from './Inputs/user.input';
 import { User } from './user.entity';
 import { SendGridService } from '../send-grid/send-grid.service';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth/auth.service';
-import { UserLoginInput } from './user-login.input';
-import { ChangePasswordInput } from './change-password.input';
+import { UserLoginInput } from './Inputs/user-login.input';
+import { ChangePasswordInput } from './Inputs/change-password.input';
 
 @Injectable()
 export class UserService {

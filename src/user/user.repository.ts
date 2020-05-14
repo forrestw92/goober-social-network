@@ -1,11 +1,11 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUserInput } from './user.input';
+import { CreateUserInput } from './Inputs/user.input';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
-import { UserLoginInput } from './user-login.input';
-import { ChangePasswordInput } from './change-password.input';
+import { UserLoginInput } from './Inputs/user-login.input';
+import { ChangePasswordInput } from './Inputs/change-password.input';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {

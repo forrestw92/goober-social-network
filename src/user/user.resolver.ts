@@ -1,12 +1,12 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { UserType } from './user.type';
-import { CreateUserInput } from './user.input';
+import { CreateUserInput } from './Inputs/user.input';
 import { User } from './user.entity';
-import { UserLoginInput } from './user-login.input';
+import { UserLoginInput } from './Inputs/user-login.input';
 import { UseGuards } from '@nestjs/common';
 import { AccessTokenType } from '../auth/access-token.type';
-import { ChangePasswordInput } from './change-password.input';
+import { ChangePasswordInput } from './Inputs/change-password.input';
 import { GetUser } from './get-user.decorator';
 import { JwtAuthGuard } from '../auth/auth.guard';
 
