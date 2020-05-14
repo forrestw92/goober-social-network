@@ -46,7 +46,7 @@ export class UserService {
         return this.authService.createAccessToken(user);
     }
 
-    async resetPassword(
+    async changePassword(
         changePasswordInput: ChangePasswordInput,
         user: User,
     ): Promise<User> {

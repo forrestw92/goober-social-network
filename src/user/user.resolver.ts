@@ -4,8 +4,7 @@ import { UserType } from './user.type';
 import { CreateUserInput } from './user.input';
 import { User } from './user.entity';
 import { UserLoginInput } from './user-login.input';
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
-import { AuthService } from '../auth/auth.service';
+import { UseGuards } from '@nestjs/common';
 import { AccessTokenType } from '../auth/access-token.type';
 import { ChangePasswordInput } from './change-password.input';
 import { GetUser } from './get-user.decorator';
@@ -30,11 +29,11 @@ export class UserResolver {
     }
     @UseGuards(JwtAuthGuard)
     @Mutation(type => UserType)
-    async resetPassword(
+    async changePassword(
         @Args('changePasswordInput') changePasswordInput: ChangePasswordInput,
         @GetUser() user: User,
     ) {
-        return this.userService.resetPassword(changePasswordInput, user);
+        return this.userService.changePassword(changePasswordInput, user);
     }
     @Query(type => UserType)
     async user(@Args('userId') userId: string): Promise<User> {
