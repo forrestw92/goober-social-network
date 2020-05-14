@@ -4,9 +4,12 @@ import { UserType } from './user.type';
 import { CreateUserInput } from './user.input';
 import { User } from './user.entity';
 import { UserLoginInput } from './user-login.input';
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { AccessTokenType } from '../auth/access-token.type';
+import { ChangePasswordInput } from './change-password.input';
+import { GetUser } from './get-user.decorator';
+import { JwtAuthGuard } from '../auth/auth.guard';
 
 @Resolver(of => User)
 export class UserResolver {
@@ -25,7 +28,14 @@ export class UserResolver {
     ): Promise<{ accessToken: string }> {
         return this.userService.loginUser(userLoginInput);
     }
-
+    @UseGuards(JwtAuthGuard)
+    @Mutation(type => UserType)
+    async resetPassword(
+        @Args('changePasswordInput') changePasswordInput: ChangePasswordInput,
+        @GetUser() user: User,
+    ) {
+        return this.userService.resetPassword(changePasswordInput, user);
+    }
     @Query(type => UserType)
     async user(@Args('userId') userId: string): Promise<User> {
         return this.userService.getUserById(userId);

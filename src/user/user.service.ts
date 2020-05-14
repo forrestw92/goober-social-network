@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { CreateUserInput } from './user.input';
@@ -7,6 +11,7 @@ import { SendGridService } from '../send-grid/send-grid.service';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth/auth.service';
 import { UserLoginInput } from './user-login.input';
+import { ChangePasswordInput } from './change-password.input';
 
 @Injectable()
 export class UserService {
@@ -40,6 +45,25 @@ export class UserService {
         }
         return this.authService.createAccessToken(user);
     }
+
+    async resetPassword(
+        changePasswordInput: ChangePasswordInput,
+        user: User,
+    ): Promise<User> {
+        const { newPassword, confirmNewPassword } = changePasswordInput;
+        if (newPassword !== confirmNewPassword) {
+            throw new BadRequestException("Passwords don't match");
+        }
+        const updatedUser: User = await this.userRepository.changePassword(
+            changePasswordInput,
+            user,
+        );
+        if (!updatedUser) {
+            throw new BadRequestException('Incorrect password');
+        }
+        return updatedUser;
+    }
+
     async getUserById(userId: string): Promise<User> {
         return this.userRepository.getUserById(userId);
     }

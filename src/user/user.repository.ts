@@ -5,6 +5,7 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { UserLoginInput } from './user-login.input';
+import { ChangePasswordInput } from './change-password.input';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -75,6 +76,25 @@ export class UserRepository extends Repository<User> {
         } else {
             return null;
         }
+    }
+
+    async changePassword(
+        changePasswordInput: ChangePasswordInput,
+        user: User,
+    ): Promise<User> {
+        const { currentPassword, newPassword } = changePasswordInput;
+        const validatePassword = await user.validatePassword(currentPassword);
+        const samePasswordCheck = await user.validatePassword(newPassword);
+        if (samePasswordCheck) {
+            throw new BadRequestException("Password can't be same as current.");
+        }
+        if (validatePassword) {
+            const salt = await bcrypt.genSalt();
+            user.password = await this.hashPassword(newPassword, salt);
+            user.salt = salt;
+            return this.save(user);
+        }
+        return null;
     }
     protected async hashPassword(
         password: string,
