@@ -42,6 +42,14 @@ export class UserRepository extends Repository<User> {
         });
     }
 
+    async confirmAccount(user: User): Promise<User> {
+        const nowISO: string = new Date().toISOString();
+        user.isConfirmed = true;
+        user.confirmKey = '';
+        user.updatedAt = nowISO;
+        return this.save(user);
+    }
+
     async getUserById(userId: string): Promise<User> {
         const user: User = await this.findOne({ id: userId });
         if (!user) {
@@ -67,7 +75,7 @@ export class UserRepository extends Repository<User> {
         }
     }
 
-    async validateConfirmKey(confirmKey: string): Promise<User> {
+    async getUserByConfirmKey(confirmKey: string): Promise<User> {
         const user: User = await this.findOne({
             confirmKey,
         });
@@ -90,8 +98,10 @@ export class UserRepository extends Repository<User> {
         }
         if (validatePassword) {
             const salt = await bcrypt.genSalt();
+            const nowISO = new Date().toISOString();
             user.password = await this.hashPassword(newPassword, salt);
             user.salt = salt;
+            user.updatedAt = nowISO;
             return this.save(user);
         }
         return null;

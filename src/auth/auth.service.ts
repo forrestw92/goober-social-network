@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    Injectable,
+    InternalServerErrorException,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/user.entity';
 import { JwtPayload } from './jwt.payload';
@@ -60,15 +64,20 @@ export class AuthService {
     }
 
     public async confirmAccount(confirmKey: string): Promise<boolean> {
-        const user = await this.userRepository.validateConfirmKey(confirmKey);
+        const user = await this.userRepository.getUserByConfirmKey(confirmKey);
         if (!user) {
             throw new UnauthorizedException('Invalid Confirm key');
         }
         const validated = this.validateEmailConfirmKey(confirmKey, user);
         if (validated) {
-            user.isConfirmed = true;
-            user.confirmKey = '';
-            await this.userRepository.save(user);
+            const confirmedUser = await this.userRepository.confirmAccount(
+                user,
+            );
+            if (!confirmedUser) {
+                throw new InternalServerErrorException(
+                    'Error confirming account.',
+                );
+            }
             return true;
         }
         return false;
