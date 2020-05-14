@@ -24,12 +24,6 @@ export class UserType {
     username: string;
 
     @Field()
-    password: string;
-
-    @Field()
-    salt: string;
-
-    @Field()
     createdAt: string;
 
     @Field()
