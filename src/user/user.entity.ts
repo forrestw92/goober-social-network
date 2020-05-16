@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { RefreshToken } from './refresh-token.entity';
 @Entity()
 export class User {
     @PrimaryColumn()
@@ -37,6 +38,13 @@ export class User {
 
     @Column()
     updatedAt: string;
+
+    @OneToMany(
+        () => RefreshToken,
+        refreshToken => refreshToken.user,
+        { eager: true },
+    )
+    refreshTokens: RefreshToken[];
 
     async validatePassword(password: string): Promise<boolean> {
         const hash = await bcrypt.hash(password, this.salt);
