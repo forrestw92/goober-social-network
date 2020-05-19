@@ -27,6 +27,17 @@ export class AuthService {
         return { accessToken };
     }
 
+    public createRefreshToken(user: User): { refreshToken: string } {
+        const { username } = user;
+        const payload: JwtPayload = { username };
+        const refreshToken = this.jwtService.sign(payload, {
+            expiresIn: this.configService.get<string>(
+                'auth.refreshTokenExpireTime',
+            ),
+        });
+        return { refreshToken };
+    }
+
     public createEmailConfirmKey(email: string): string {
         const payload = { email };
         return this.jwtService.sign(payload, {
